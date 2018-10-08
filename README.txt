@@ -1,3 +1,3 @@
-Gra w kÛ≥ko i krzyøyk.
-Prosta gra w kÛ≥ko i krzyøyk dla 2 graczy z wykorzystaniem statycznej tablicy.
-MoøliwoúÊ wybrania kÛ≥ka lub krzyøyka oraz ponownej rozgrywki.
+Gra w k√≥≈Çko i krzy≈ºyk.
+Prosta gra w k√≥≈Çko i krzy≈ºyk dla 2 graczy z wykorzystaniem dynamicznej tablicy.
+Mo≈ºliwo≈õƒá wybrania rozmiaru tablicy, k√≥≈Çka lub krzy≈ºyka oraz ponownej rozgrywki.
