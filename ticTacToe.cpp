@@ -70,15 +70,19 @@ void move(char letter, TableStruct* gameTable){
     int field;
     std::cout<<"Podaj numer od 1 do "<< (tableSize*tableSize)<<", gdzie chcesz umiescic swoj znak\n";
     showFieldNumbers(tableSize);
-    std::cin>>field;
-    field = field - 1;
 
+    do {
+        std::cin.clear();
+        std::cin.ignore(100,'\n');
+        std::cout << "Podaj liczbe od 1 do "<<(tableSize*tableSize)<<"\n";
+    }while (!(std::cin >> field) or field-1 > tableSize*tableSize);
 
     while(table[field/tableSize][field%tableSize] == 'X' or table[field/tableSize][field%tableSize] == 'O'){
         std::cout<<"Nieprawidlowy ruch. Podaj numer pola na ktorym nie ma zadnego znaku\n";
         std::cin>>field;
         field = field - 1;
     }
+    field = field - 1;
     table[field/tableSize][field%tableSize] = letter;
 
 }
