@@ -62,27 +62,30 @@ void showTable(TableStruct* gameTable){
     }
 }
 
+int userPrompt(int tableSize){
+    int field;
+    do {
+        std::cin.clear();
+        std::cin.ignore(100,'\n');
+        std::cout << "Podaj liczbe od 1 do "<<(tableSize*tableSize)<<"\n";
+        showFieldNumbers(tableSize);
+    }while (!(std::cin >> field) or field-1 > tableSize*tableSize);
+    return field;
+}
 
 void move(char letter, TableStruct* gameTable){
 
     int tableSize = gameTable->tableSize;
     char** table = gameTable->table;
-    int field;
-    std::cout<<"Podaj numer od 1 do "<< (tableSize*tableSize)<<", gdzie chcesz umiescic swoj znak\n";
-    showFieldNumbers(tableSize);
-
-    do {
-        std::cin.clear();
-        std::cin.ignore(100,'\n');
-        std::cout << "Podaj liczbe od 1 do "<<(tableSize*tableSize)<<"\n";
-    }while (!(std::cin >> field) or field-1 > tableSize*tableSize);
+    int field = userPrompt(tableSize);
+    field = field - 1;
 
     while(table[field/tableSize][field%tableSize] == 'X' or table[field/tableSize][field%tableSize] == 'O'){
         std::cout<<"Nieprawidlowy ruch. Podaj numer pola na ktorym nie ma zadnego znaku\n";
-        std::cin>>field;
+        field=userPrompt(tableSize);
         field = field - 1;
     }
-    field = field - 1;
+
     table[field/tableSize][field%tableSize] = letter;
 
 }
