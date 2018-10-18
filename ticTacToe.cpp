@@ -7,11 +7,28 @@
 
 struct TableStruct{
 
-    int tableSize;
-    char** table;
+    unsigned tableSize;
+    int maxMoves;
+    int getMaxMoves() {return tableSize * tableSize;};
+    char** table ;
+    char** fillTable();
 };
 
+char** TableStruct::fillTable(){
+    table = new char*[tableSize];
+    for (int i=0; i<tableSize; ++i)
+        table[i] = new char[tableSize+1];
 
+    for(int rows = 0; rows < tableSize; ++rows){
+        for(int cols = 0; cols < tableSize; ++cols){
+            table[rows][cols]= ' ';
+
+        }
+        table[rows][tableSize] = '\0';
+    }
+
+    return table;
+}
 
 
 
@@ -35,30 +52,16 @@ void showFieldNumbers(int tableSize)
     }
 }
 
-char** fillTable(int tableSize){
-    char** table = new char*[tableSize];
-    for (int i=0; i<tableSize; ++i)
-        table[i] = new char[tableSize+1];
 
-    for(int rows = 0; rows < tableSize; ++rows){
-        for(int cols = 0; cols < tableSize; ++cols){
-            table[rows][cols]= ' ';
+void showTable(TableStruct &gameTable){
 
+    for (int rows = 0; rows < gameTable.tableSize; ++rows){
+        for(int cols = 0; cols < gameTable.tableSize-1; ++cols){
+            std::cout<<" "<<gameTable.table[rows][cols]<<" |";
         }
-        table[rows][tableSize] = '\0';
-    }
-
-    return table;
-}
-void showTable(TableStruct* gameTable){
-    int tableSize = gameTable->tableSize;
-    for (int rows = 0; rows < tableSize; ++rows){
-        for(int cols =0; cols < tableSize-1; ++cols){
-            std::cout<<" "<<gameTable->table[rows][cols]<<" |";
-        }
-        std::cout<<" "<<gameTable->table[rows][tableSize-1]<<std::endl;
-        if(rows < tableSize - 1)
-            std::cout<< std::string(4*tableSize-1,'-')<<"\n";
+        std::cout<<" "<<gameTable.table[rows][gameTable.tableSize-1]<<std::endl;
+        if(rows < gameTable.tableSize - 1)
+            std::cout<< std::string(4*gameTable.tableSize-1,'-')<<"\n";
     }
 }
 
@@ -73,31 +76,30 @@ int userPrompt(int tableSize){
     return field;
 }
 
-void move(char letter, TableStruct* gameTable){
+void move(char letter, TableStruct &gameTable){
 
-    int tableSize = gameTable->tableSize;
-    char** table = gameTable->table;
-    int field = userPrompt(tableSize);
+    int field = userPrompt(gameTable.tableSize);
     field = field - 1;
 
-    while(table[field/tableSize][field%tableSize] == 'X' or table[field/tableSize][field%tableSize] == 'O'){
+    while(gameTable.table[field/gameTable.tableSize][field%gameTable.tableSize] == 'X' or
+          gameTable.table[field/gameTable.tableSize][field%gameTable.tableSize] == 'O')
+    {
         std::cout<<"Nieprawidlowy ruch. Podaj numer pola na ktorym nie ma zadnego znaku\n";
-        field=userPrompt(tableSize);
+        field=userPrompt(gameTable.tableSize);
         field = field - 1;
     }
 
-    table[field/tableSize][field%tableSize] = letter;
+    gameTable.table[field/gameTable.tableSize][field%gameTable.tableSize] = letter;
 
 }
 
-bool winningConditions(char playerLetter, TableStruct* gameTable){
-    int tableSize = gameTable->tableSize;
-    char** table = gameTable->table;
+bool winningConditions(char playerLetter, TableStruct &gameTable){
+
     //SPRAWDZA WARUNKI -->
-    for(int row = 0; row <tableSize;++row){
-        bool allInRowPlayerLetter = table[row][0] == playerLetter;
-        for(int col = 1; col < tableSize && allInRowPlayerLetter; ++col){
-            allInRowPlayerLetter = table[row][col] == playerLetter;
+    for(int row = 0; row <gameTable.tableSize;++row){
+        bool allInRowPlayerLetter = gameTable.table[row][0] == playerLetter;
+        for(int col = 1; col < gameTable.tableSize && allInRowPlayerLetter; ++col){
+            allInRowPlayerLetter = gameTable.table[row][col] == playerLetter;
         }
         if (allInRowPlayerLetter)
             return true;
@@ -106,33 +108,33 @@ bool winningConditions(char playerLetter, TableStruct* gameTable){
     //                 ^
     //SPRAWDZA WARUNKI |
     //                 |
-    for(int col = 0; col <tableSize;++col){
-        bool allInColPlayerLetter = table[0][col] == playerLetter;
-        for(int row = 1; row < tableSize && allInColPlayerLetter; ++row){
-            allInColPlayerLetter = table[row][col] == playerLetter;
+    for(int col = 0; col <gameTable.tableSize;++col){
+        bool allInColPlayerLetter = gameTable.table[0][col] == playerLetter;
+        for(int row = 1; row < gameTable.tableSize && allInColPlayerLetter; ++row){
+            allInColPlayerLetter = gameTable.table[row][col] == playerLetter;
         }
         if (allInColPlayerLetter)
             return true;
     }
 
     //SPRAWDZA SKOSY
-    bool allInCrossPlayerLetter = table[0][0]== playerLetter;
-    for(int indeks = 1; indeks < tableSize && allInCrossPlayerLetter; ++indeks)
+    bool allInCrossPlayerLetter = gameTable.table[0][0]== playerLetter;
+    for(int indeks = 1; indeks < gameTable.tableSize && allInCrossPlayerLetter; ++indeks)
     {
-        allInCrossPlayerLetter = table[indeks][indeks]== playerLetter;
+        allInCrossPlayerLetter = gameTable.table[indeks][indeks]== playerLetter;
     }
     if(allInCrossPlayerLetter)
         return true;
 
-    allInCrossPlayerLetter = table[0][tableSize-1]== playerLetter;
-    for(int row = 1, col = tableSize-2; row < tableSize && allInCrossPlayerLetter; ++row, --col ){
-        allInCrossPlayerLetter = table[row][col] == playerLetter;
+    allInCrossPlayerLetter = gameTable.table[0][gameTable.tableSize-1]== playerLetter;
+    for(int row = 1, col = gameTable.tableSize-2; row < gameTable.tableSize && allInCrossPlayerLetter; ++row, --col ){
+        allInCrossPlayerLetter = gameTable.table[row][col] == playerLetter;
     }
 
     return allInCrossPlayerLetter;
 
 }
-void game(TableStruct* gameTable,char player1Letter, char player2Letter,int maxMoves){
+void game(TableStruct &gameTable,char player1Letter, char player2Letter,int maxMoves){
 
     for (int i = 1; i <= maxMoves; ++i) {
         if (i % 2 == 1){
@@ -164,11 +166,9 @@ void game(TableStruct* gameTable,char player1Letter, char player2Letter,int maxM
 
 }
 int main(){
-    int tableSize{0};
-    int maxMoves{0};
+
 
     TableStruct gameTable;
-
 
     char continueGame = 'Y';
     char player1Letter;
@@ -179,15 +179,11 @@ int main(){
     std::cout<<"     ------------------------------------------\n";
 
     std::cout<<"Podaj rozmiar tablicy, jesli chcesz podac rozmiar np 3 x 3 wpisz 3, jesli 4 x 4, podaj 4, itd.\n";
-    std::cin>>tableSize;
-
-    maxMoves = tableSize*tableSize;
-
-    gameTable.tableSize = tableSize;
-    gameTable.table = fillTable(maxMoves);
+    std::cin>>gameTable.tableSize;
+    gameTable.maxMoves = gameTable.getMaxMoves();
 
     do {
-        gameTable.table = fillTable(maxMoves);
+        gameTable.fillTable();
         do {
             std::cout << "Wybiera Gracz 1. O czy X?\n";
             std::cin >> player1Letter;
@@ -202,7 +198,7 @@ int main(){
             player2letter = 'X';
         }
 
-        game(&gameTable,player1Letter,player2letter,maxMoves);
+        game(gameTable,player1Letter,player2letter,gameTable.maxMoves);
         std::cout << "Czy chcesz zagrac ponownie? Y/N\n";
         std::cin >> continueGame;
         continueGame = toupper(continueGame);
@@ -210,7 +206,7 @@ int main(){
 
     }while(continueGame == 'Y');
 
-    for(int row = 0; row < tableSize; ++row){
+    for(int row = 0; row < gameTable.tableSize; ++row){
         delete[] gameTable.table[row];
     }
     delete gameTable.table;
